@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Erdis Brahimi — Operations Research & Computer Science at Cornell. Quantitative finance, data engineering, and optimization.">
+  <title>Erdis Brahimi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --nav-h: 64px;
+      --max-w: 1080px;
+      --radius: 10px;
+      --transition: 0.3s ease;
+
+      /* Light mode */
+      --bg: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-nav: rgba(248,250,252,0.85);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --accent: #0d9488;
+      --accent-hover: #0f766e;
+      --border: #e2e8f0;
+      --hero-gradient: linear-gradient(135deg, #f0fdfa 0%, #f8fafc 50%, #eff6ff 100%);
+      --timeline-line: #cbd5e1;
+      --tag-bg: #f0fdfa;
+      --tag-text: #0d9488;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+      --focus-ring: 0 0 0 3px rgba(13,148,136,0.4);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-nav: rgba(15,23,42,0.9);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #2dd4bf;
+      --accent-hover: #5eead4;
+      --border: #334155;
+      --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      --timeline-line: #475569;
+      --tag-bg: rgba(45,212,191,0.1);
+      --tag-text: #2dd4bf;
+      --shadow: 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.2);
+      --focus-ring: 0 0 0 3px rgba(45,212,191,0.4);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--nav-h) + 24px);
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      transition: background var(--transition), color var(--transition);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Accessibility ────────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      z-index: 1000;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus {
+      top: 12px;
+    }
+
+    :focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: 4px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ── Utilities ────────────────────────────────────── */
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section {
+      padding: 96px 0;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 48px;
+      color: var(--text);
+    }
+
+    /* Scroll fade-in */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Navigation ───────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      background: var(--bg-nav);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .nav-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo:hover { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color var(--transition);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width var(--transition);
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--accent);
+    }
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      transition: border-color var(--transition), color var(--transition);
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .theme-toggle svg { width: 20px; height: 20px; }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: var(--text);
+    }
+    .hamburger svg { width: 28px; height: 28px; }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: var(--nav-h);
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: var(--bg-nav);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 24px;
+        gap: 20px;
+        transform: translateY(-120%);
+        transition: transform var(--transition);
+        z-index: 99;
+      }
+      .nav-links.open { transform: translateY(0); }
+      .hamburger { display: flex; }
+    }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--hero-gradient);
+      padding-top: var(--nav-h);
+      transition: background var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 680px;
+      padding: 48px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 400;
+    }
+
+    .hero-grad {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+    }
+
+    .hero-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+    }
+    .hero-link svg { width: 18px; height: 18px; }
+
+    .hero-link--primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .hero-link--primary:hover {
+      background: var(--accent-hover);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero-link--secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .hero-link--secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── About ────────────────────────────────────────── */
+    .about-content {
+      max-width: 760px;
+    }
+    .about-content p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── Experience ───────────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 36px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--timeline-line);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 48px;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -36px;
+      top: 6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid var(--bg);
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .timeline-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .timeline-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .timeline-role {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .timeline-company {
+      font-size: 1rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .timeline-date {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .timeline-card ul {
+      padding-left: 20px;
+    }
+    .timeline-card li {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    /* ── Projects ─────────────────────────────────────── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 768px) {
+      .projects-grid { grid-template-columns: 1fr; }
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .project-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--tag-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .project-icon svg { width: 22px; height: 22px; }
+
+    .project-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .project-card p {
+      font-size: 0.93rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      flex: 1;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* ── Skills ───────────────────────────────────────── */
+    .skills-group {
+      margin-bottom: 32px;
+    }
+    .skills-group:last-child { margin-bottom: 0; }
+
+    .skills-group-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .skills-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-tag {
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+    }
+    .skill-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── Education ────────────────────────────────────── */
+    .edu-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      max-width: 680px;
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .edu-school {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .edu-college {
+      font-size: 0.95rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .edu-degree {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .edu-date {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .coursework-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .coursework-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+    }
+    .coursework-list li {
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+    }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0;
+      transition: border-color var(--transition);
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-copy {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── Custom Cursor ────────────────────────────────── */
+    @media (pointer: fine) {
+      * { cursor: none !important; }
+
+      .cursor-dot {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s ease, height 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+      }
+      .cursor-dot.hovering {
+        width: 6px;
+        height: 6px;
+        opacity: 0.8;
+      }
+
+      .cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 36px;
+        height: 36px;
+        border: 1.5px solid var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9998;
+        transform: translate(-50%, -50%);
+        transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease, border-width 0.25s ease, opacity 0.3s ease;
+        opacity: 0.5;
+      }
+      .cursor-ring.hovering {
+        width: 52px;
+        height: 52px;
+        border-width: 2px;
+        opacity: 0.7;
+      }
+
+      .cursor-brackets {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9997;
+        transform: translate(-50%, -50%);
+        font-family: 'Inter', monospace;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent);
+        opacity: 0;
+        transition: opacity 0.25s ease, letter-spacing 0.25s ease;
+        letter-spacing: 20px;
+        white-space: nowrap;
+      }
+      .cursor-brackets.hovering {
+        opacity: 0.45;
+        letter-spacing: 32px;
+      }
+    }
+    @media (pointer: coarse) {
+      .cursor-dot, .cursor-ring, .cursor-brackets { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cursor-dot, .cursor-ring, .cursor-brackets { display: none !important; }
+      * { cursor: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+  <div class="cursor-brackets" id="cursorBrackets" aria-hidden="true">&lt; /&gt;</div>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation -->
+  <header class="nav" role="banner">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo" aria-label="Erdis Brahimi — home">EB</a>
+      <nav aria-label="Primary navigation">
+        <ul class="nav-links" id="navLinks" role="list">
+          <li><a href="#about">About</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#education">Education</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+              <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero" id="hero" aria-label="Introduction">
+      <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+      <div class="hero-content">
+        <h1>Erdis Brahimi</h1>
+        <p class="hero-tagline">Operations Research &amp; Computer Science</p>
+        <p class="hero-grad">Cornell University, College of Engineering &middot; Class of 2026</p>
+        <div class="hero-links">
+          <a href="mailto:eb697@cornell.edu" class="hero-link hero-link--primary" aria-label="Send email to Erdis Brahimi">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email
+          </a>
+          <a href="https://linkedin.com/in/erdisbrahimi/" target="_blank" rel="noopener noreferrer" class="hero-link hero-link--secondary" aria-label="Visit Erdis Brahimi's LinkedIn profile (opens in new tab)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.47 2H3.53A1.45 1.45 0 0 0 2 3.47v17.06A1.45 1.45 0 0 0 3.47 22h17.06A1.45 1.45 0 0 0 22 20.53V3.47A1.45 1.45 0 0 0 20.47 2ZM8.09 18.74h-3v-9h3v9ZM6.59 8.48a1.56 1.56 0 1 1 0-3.12 1.56 1.56 0 0 1 0 3.12Zm12.32 10.26h-3v-4.83c0-1.21-.43-2-1.52-2A1.65 1.65 0 0 0 12.85 13a2 2 0 0 0-.1.73v5h-3v-9h3v1.2a3 3 0 0 1 2.71-1.5c2 0 3.45 1.29 3.45 4.06v5.25Z"/></svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about" aria-label="About me">
+      <div class="container fade-in">
+        <p class="section-label">About</p>
+        <h2 class="section-title">A bit about me</h2>
+        <div class="about-content">
+          <p>I'm a senior at Cornell University studying Operations Research &amp; Engineering and Computer Science. I'm interested in the intersection of computing and finance — I'm drawn to problems where rigorous modeling meets real-world decision-making.</p>
+          <p>Professionally, I've built forecasting models at a credit fund, re-estimated derivatives risk for a major bank, and researched stochastic asset allocation under a financial engineering professor. These experiences taught me to think in distributions, build reliable data pipelines, and communicate technical ideas to stakeholders who care about the bottom line.</p>
+          <p>Away from the screen, I recharge by backpacking through remote trails, playing poker (both the math and the psychology), and training Muay Thai. I'm an aviation geek, a recreational basketball player and skier, and occasional philosophy reader. I believe the best engineers bring breadth — not just depth — to their work.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="section" id="experience" aria-label="Work experience">
+      <div class="container fade-in">
+        <p class="section-label">Experience</p>
+        <h2 class="section-title">Where I've worked</h2>
+        <div class="timeline" role="list">
+
+          <article class="timeline-item" role="listitem">
+            <div class="timeline-dot" aria-hidden="true"></div>
+            <div class="timeline-card">
+              <h3 class="timeline-role">Quantitative Analyst</h3>
+              <p class="timeline-company">Balbec Capital LP</p>
+              <p class="timeline-date">Summer 2025 | part-time Fall 2025 | returning full time</p>
+              <ul>
+              </ul>
+            </div>
+          </article>
+
+          <article class="timeline-item" role="listitem">
+            <div class="timeline-dot" aria-hidden="true"></div>
+            <div class="timeline-card">
+              <h3 class="timeline-role">Financial Technology Intern</h3>
+              <p class="timeline-company">EY</p>
+              <p class="timeline-date">June &ndash; August 2024</p>
+              <ul>
+                <li>Re-estimated credit risk exposure for a $100B+ derivatives portfolio by building reconciliation tools that identified valuation discrepancies.</li>
+                <li>Automated risk calculations across counterparties, reducing manual review time and improving reporting accuracy.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="timeline-item" role="listitem">
+            <div class="timeline-dot" aria-hidden="true"></div>
+            <div class="timeline-card">
+              <h3 class="timeline-role">Undergraduate Researcher</h3>
+              <p class="timeline-company">Cornell Financial Engineering &mdash; Prof. David Goldberg</p>
+              <p class="timeline-date">October 2023 &ndash; April 2024</p>
+              <ul>
+                <li>Developed LP-based asset allocation models to optimize risk-adjusted returns under real-world constraints.</li>
+                <li>Constructed stochastic retirement planning models incorporating uncertain market returns and longevity risk.</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="timeline-item" role="listitem">
+            <div class="timeline-dot" aria-hidden="true"></div>
+            <div class="timeline-card">
+              <h3 class="timeline-role">Data Analyst Intern</h3>
+              <p class="timeline-company">Cornell Division of Financial Services</p>
+              <p class="timeline-date">May &ndash; August 2023</p>
+              <ul>
+                <li>Analyzed 15 years of university funding data, surfacing trends that informed budget allocation decisions.</li>
+                <li>Identified opportunities for a 12% cost reduction through spend pattern analysis and vendor consolidation insights.</li>
+              </ul>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="section" id="projects" aria-label="Personal projects">
+      <div class="container fade-in">
+        <p class="section-label">Projects</p>
+        <h2 class="section-title">Things I've built</h2>
+        <div class="projects-grid">
+
+          <article class="project-card">
+            <div class="project-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><polyline points="18,9 13,14 9,10 3,16"/></svg>
+            </div>
+            <h3>Live Equity Market Dashboard</h3>
+            <p>A real-time streaming dashboard that ingests tick-level equity data from the Polygon.io WebSocket API, processes it through a lightweight event pipeline, and renders interactive candlestick charts with volume overlays and moving average bands.</p>
+            <div class="project-tags" role="list" aria-label="Technologies used">
+              <span class="tag" role="listitem">Python</span>
+              <span class="tag" role="listitem">WebSockets</span>
+              <span class="tag" role="listitem">Redis</span>
+              <span class="tag" role="listitem">Plotly Dash</span>
+              <span class="tag" role="listitem">PostgreSQL</span>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <h3>Poker EV Optimizer</h3>
+            <p>A game-theory optimal (GTO) solver for simplified No-Limit Texas Hold'em scenarios. Uses counterfactual regret minimization to compute Nash equilibrium strategies across preflop and postflop decision trees, with an interactive visualizer for range charts and EV breakdowns.</p>
+            <div class="project-tags" role="list" aria-label="Technologies used">
+              <span class="tag" role="listitem">Python</span>
+              <span class="tag" role="listitem">NumPy</span>
+              <span class="tag" role="listitem">Game Theory</span>
+              <span class="tag" role="listitem">React</span>
+              <span class="tag" role="listitem">D3.js</span>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>Flight Route Network Optimizer</h3>
+            <p>An integer programming model that optimizes regional airline route networks given fleet constraints, passenger demand forecasts, and airport slot availability. Benchmarked against real schedule data from the Bureau of Transportation Statistics to validate cost savings of up to 9%.</p>
+            <div class="project-tags" role="list" aria-label="Technologies used">
+              <span class="tag" role="listitem">Python</span>
+              <span class="tag" role="listitem">Gurobi</span>
+              <span class="tag" role="listitem">Pandas</span>
+              <span class="tag" role="listitem">Linear Programming</span>
+              <span class="tag" role="listitem">NetworkX</span>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+            </div>
+            <h3>NBA Player Performance Predictor</h3>
+            <p>A machine learning pipeline that forecasts player stat lines for upcoming NBA games using historical box scores, opponent defensive ratings, and rest-day features. Trained gradient-boosted and LSTM models, then served predictions via a FastAPI endpoint for daily fantasy lineup research.</p>
+            <div class="project-tags" role="list" aria-label="Technologies used">
+              <span class="tag" role="listitem">Python</span>
+              <span class="tag" role="listitem">scikit-learn</span>
+              <span class="tag" role="listitem">PyTorch</span>
+              <span class="tag" role="listitem">FastAPI</span>
+              <span class="tag" role="listitem">PostgreSQL</span>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+            </div>
+            <h3>Monte Carlo Options Pricer</h3>
+            <p>A simulation engine for pricing exotic options (Asian, barrier, lookback) using geometric Brownian motion with variance reduction techniques including antithetic variates and control variates. Includes a Streamlit UI for adjusting parameters and visualizing convergence behavior.</p>
+            <div class="project-tags" role="list" aria-label="Technologies used">
+              <span class="tag" role="listitem">Python</span>
+              <span class="tag" role="listitem">NumPy</span>
+              <span class="tag" role="listitem">SciPy</span>
+              <span class="tag" role="listitem">Streamlit</span>
+              <span class="tag" role="listitem">Monte Carlo</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills" aria-label="Technical skills">
+      <div class="container fade-in">
+        <p class="section-label">Skills</p>
+        <h2 class="section-title">What I work with</h2>
+
+        <div class="skills-group">
+          <h3 class="skills-group-title">Languages</h3>
+          <div class="skills-tags" role="list" aria-label="Programming languages">
+            <span class="skill-tag" role="listitem">Python</span>
+            <span class="skill-tag" role="listitem">Java</span>
+            <span class="skill-tag" role="listitem">OCaml</span>
+            <span class="skill-tag" role="listitem">SQL</span>
+          </div>
+        </div>
+
+        <div class="skills-group">
+          <h3 class="skills-group-title">Libraries &amp; Frameworks</h3>
+          <div class="skills-tags" role="list" aria-label="Libraries and frameworks">
+            <span class="skill-tag" role="listitem">pandas</span>
+            <span class="skill-tag" role="listitem">NumPy</span>
+            <span class="skill-tag" role="listitem">scikit-learn</span>
+            <span class="skill-tag" role="listitem">SciPy</span>
+            <span class="skill-tag" role="listitem">Django</span>
+          </div>
+        </div>
+
+        <div class="skills-group">
+          <h3 class="skills-group-title">Tools &amp; Platforms</h3>
+          <div class="skills-tags" role="list" aria-label="Tools and platforms">
+            <span class="skill-tag" role="listitem">PostgreSQL</span>
+            <span class="skill-tag" role="listitem">Excel</span>
+            <span class="skill-tag" role="listitem">Git</span>
+          </div>
+        </div>
+
+        <div class="skills-group">
+          <h3 class="skills-group-title">Techniques</h3>
+          <div class="skills-tags" role="list" aria-label="Technical techniques">
+            <span class="skill-tag" role="listitem">Machine Learning</span>
+            <span class="skill-tag" role="listitem">Optimization</span>
+            <span class="skill-tag" role="listitem">Monte Carlo Simulation</span>
+            <span class="skill-tag" role="listitem">Data Visualization</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section class="section" id="education" aria-label="Education">
+      <div class="container fade-in">
+        <p class="section-label">Education</p>
+        <h2 class="section-title">Where I studied</h2>
+        <div class="edu-card">
+          <h3 class="edu-school">Cornell University</h3>
+          <p class="edu-college">College of Engineering</p>
+          <p class="edu-degree">Dual B.S. in Operations Research &amp; Engineering and Computer Science</p>
+          <p class="edu-date">Expected May 2026</p>
+          <p class="coursework-title">Relevant Coursework</p>
+          <ul class="coursework-list" role="list">
+            <li role="listitem">Data Structures &amp; Algorithms</li>
+            <li role="listitem">Machine Learning</li>
+            <li role="listitem">Optimization</li>
+            <li role="listitem">Stochastic Processes</li>
+            <li role="listitem">Probability &amp; Statistics</li>
+            <li role="listitem">Linear Algebra</li>
+            <li role="listitem">Simulation Modeling</li>
+            <li role="listitem">Financial Engineering</li>
+            <li role="listitem">Database Systems</li>
+            <li role="listitem">Functional Programming</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / Footer -->
+    <section class="section" id="contact" aria-label="Contact information">
+      <div class="container fade-in" style="text-align:center;">
+        <p class="section-label">Contact</p>
+        <h2 class="section-title">Get in touch</h2>
+        <p style="color:var(--text-muted); max-width:520px; margin:0 auto 32px; font-size:1.05rem;">
+          I'm always open to conversations about quantitative finance, engineering challenges, or interesting problems. Feel free to reach out.
+        </p>
+        <div class="hero-links" style="justify-content:center;">
+          <a href="mailto:eb697@cornell.edu" class="hero-link hero-link--primary" aria-label="Send email to Erdis Brahimi">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            eb697@cornell.edu
+          </a>
+          <a href="https://linkedin.com/in/erdisbrahimi/" target="_blank" rel="noopener noreferrer" class="hero-link hero-link--secondary" aria-label="Visit LinkedIn profile (opens in new tab)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="18" height="18"><path d="M20.47 2H3.53A1.45 1.45 0 0 0 2 3.47v17.06A1.45 1.45 0 0 0 3.47 22h17.06A1.45 1.45 0 0 0 22 20.53V3.47A1.45 1.45 0 0 0 20.47 2ZM8.09 18.74h-3v-9h3v9ZM6.59 8.48a1.56 1.56 0 1 1 0-3.12 1.56 1.56 0 0 1 0 3.12Zm12.32 10.26h-3v-4.83c0-1.21-.43-2-1.52-2A1.65 1.65 0 0 0 12.85 13a2 2 0 0 0-.1.73v5h-3v-9h3v1.2a3 3 0 0 1 2.71-1.5c2 0 3.45 1.29 3.45 4.06v5.25Z"/></svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-copy">&copy; 2026 Erdis Brahimi. All rights reserved.</p>
+        <ul class="footer-links" role="list">
+          <li><a href="mailto:eb697@cornell.edu">eb697@cornell.edu</a></li>
+          <li><a href="tel:+19294617353">929-461-7353</a></li>
+          <li><a href="https://linkedin.com/in/erdisbrahimi/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      /* ── Theme Toggle ──────────────────────────────── */
+      const html = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+      const sunIcon = toggle.querySelector('.icon-sun');
+      const moonIcon = toggle.querySelector('.icon-moon');
+
+      function setTheme(theme) {
+        html.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        if (theme === 'dark') {
+          sunIcon.style.display = 'none';
+          moonIcon.style.display = 'block';
+          toggle.setAttribute('aria-label', 'Switch to light mode');
+        } else {
+          sunIcon.style.display = 'block';
+          moonIcon.style.display = 'none';
+          toggle.setAttribute('aria-label', 'Switch to dark mode');
+        }
+      }
+
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(saved || (prefersDark ? 'dark' : 'light'));
+
+      toggle.addEventListener('click', function() {
+        setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+
+      /* ── Mobile Navigation ─────────────────────────── */
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('navLinks');
+
+      function closeMenu() {
+        navLinks.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Open navigation menu');
+      }
+
+      function openMenu() {
+        navLinks.classList.add('open');
+        hamburger.setAttribute('aria-expanded', 'true');
+        hamburger.setAttribute('aria-label', 'Close navigation menu');
+      }
+
+      hamburger.addEventListener('click', function() {
+        if (navLinks.classList.contains('open')) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      navLinks.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+          closeMenu();
+          hamburger.focus();
+        }
+      });
+
+      /* ── Scroll Fade-In ────────────────────────────── */
+      var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.fade-in').forEach(function(el) {
+          el.classList.add('visible');
+        });
+      } else {
+        var fadeObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              fadeObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.fade-in').forEach(function(el) {
+          fadeObserver.observe(el);
+        });
+      }
+
+      /* ── Active Nav Highlighting ───────────────────── */
+      var sections = document.querySelectorAll('section[id]');
+      var navAnchors = document.querySelectorAll('.nav-links a[href^="#"]');
+
+      var activeObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            navAnchors.forEach(function(a) {
+              a.classList.remove('active');
+              a.removeAttribute('aria-current');
+            });
+            var target = document.querySelector('.nav-links a[href="#' + entry.target.id + '"]');
+            if (target) {
+              target.classList.add('active');
+              target.setAttribute('aria-current', 'page');
+            }
+          }
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+
+      sections.forEach(function(section) {
+        activeObserver.observe(section);
+      });
+
+      /* ── Interactive Particle Network ──────────────── */
+      (function() {
+        if (prefersReducedMotion) return;
+
+        var canvas = document.getElementById('heroCanvas');
+        var ctx = canvas.getContext('2d');
+        var particles = [];
+        var mouse = { x: -9999, y: -9999 };
+        var raf;
+        var PARTICLE_COUNT = 80;
+        var CONNECT_DIST = 140;
+        var MOUSE_RADIUS = 180;
+
+        function resize() {
+          var hero = canvas.parentElement;
+          var dpr = window.devicePixelRatio || 1;
+          canvas.width = hero.offsetWidth * dpr;
+          canvas.height = hero.offsetHeight * dpr;
+          canvas.style.width = hero.offsetWidth + 'px';
+          canvas.style.height = hero.offsetHeight + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function isDark() {
+          return html.getAttribute('data-theme') === 'dark';
+        }
+
+        function getColors() {
+          var dark = isDark();
+          return {
+            particle: dark ? 'rgba(45,212,191,' : 'rgba(13,148,136,',
+            line: dark ? 'rgba(45,212,191,' : 'rgba(13,148,136,',
+            glow: dark ? 'rgba(45,212,191,' : 'rgba(13,148,136,'
+          };
+        }
+
+        function Particle() {
+          var hero = canvas.parentElement;
+          this.x = Math.random() * hero.offsetWidth;
+          this.y = Math.random() * hero.offsetHeight;
+          this.vx = (Math.random() - 0.5) * 0.5;
+          this.vy = (Math.random() - 0.5) * 0.5;
+          this.radius = Math.random() * 2 + 1;
+          this.baseRadius = this.radius;
+        }
+
+        function init() {
+          particles = [];
+          var count = window.innerWidth < 768 ? Math.floor(PARTICLE_COUNT * 0.5) : PARTICLE_COUNT;
+          for (var i = 0; i < count; i++) {
+            particles.push(new Particle());
+          }
+        }
+
+        function animate() {
+          var hero = canvas.parentElement;
+          var w = hero.offsetWidth;
+          var h = hero.offsetHeight;
+          ctx.clearRect(0, 0, w, h);
+
+          var colors = getColors();
+
+          for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+
+            var dx = mouse.x - p.x;
+            var dy = mouse.y - p.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < MOUSE_RADIUS) {
+              var force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
+              var angle = Math.atan2(dy, dx);
+              p.vx -= Math.cos(angle) * force * 0.6;
+              p.vy -= Math.sin(angle) * force * 0.6;
+              p.radius = p.baseRadius + force * 2;
+            } else {
+              p.radius += (p.baseRadius - p.radius) * 0.1;
+            }
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            p.vx *= 0.98;
+            p.vy *= 0.98;
+
+            p.vx += (Math.random() - 0.5) * 0.05;
+            p.vy += (Math.random() - 0.5) * 0.05;
+
+            if (p.x < 0) { p.x = 0; p.vx *= -1; }
+            if (p.x > w) { p.x = w; p.vx *= -1; }
+            if (p.y < 0) { p.y = 0; p.vy *= -1; }
+            if (p.y > h) { p.y = h; p.vy *= -1; }
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = colors.particle + (0.6) + ')';
+            ctx.fill();
+
+            for (var j = i + 1; j < particles.length; j++) {
+              var p2 = particles[j];
+              var ddx = p.x - p2.x;
+              var ddy = p.y - p2.y;
+              var d = Math.sqrt(ddx * ddx + ddy * ddy);
+              if (d < CONNECT_DIST) {
+                var alpha = (1 - d / CONNECT_DIST) * 0.25;
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = colors.line + alpha + ')';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+              }
+            }
+
+            if (dist < MOUSE_RADIUS * 1.5) {
+              var lineAlpha = (1 - dist / (MOUSE_RADIUS * 1.5)) * 0.3;
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(mouse.x, mouse.y);
+              ctx.strokeStyle = colors.glow + lineAlpha + ')';
+              ctx.lineWidth = 0.8;
+              ctx.stroke();
+            }
+          }
+
+          raf = requestAnimationFrame(animate);
+        }
+
+        canvas.parentElement.addEventListener('mousemove', function(e) {
+          var rect = canvas.getBoundingClientRect();
+          mouse.x = e.clientX - rect.left;
+          mouse.y = e.clientY - rect.top;
+        });
+
+        canvas.parentElement.addEventListener('mouseleave', function() {
+          mouse.x = -9999;
+          mouse.y = -9999;
+        });
+
+        window.addEventListener('resize', function() {
+          resize();
+          init();
+        });
+
+        resize();
+        init();
+        animate();
+      })();
+
+      /* ── Custom Cursor Logic ───────────────────────── */
+      (function() {
+        var isFine = window.matchMedia('(pointer: fine)').matches;
+        if (!isFine || prefersReducedMotion) return;
+
+        var dot = document.getElementById('cursorDot');
+        var ring = document.getElementById('cursorRing');
+        var brackets = document.getElementById('cursorBrackets');
+        var mx = -100, my = -100;
+        var ringX = -100, ringY = -100;
+        var bracketsX = -100, bracketsY = -100;
+        var visible = false;
+
+        document.addEventListener('mousemove', function(e) {
+          mx = e.clientX;
+          my = e.clientY;
+          if (!visible) {
+            visible = true;
+            dot.style.opacity = '1';
+            ring.style.opacity = '0.5';
+          }
+        });
+
+        document.addEventListener('mouseleave', function() {
+          visible = false;
+          dot.style.opacity = '0';
+          ring.style.opacity = '0';
+          brackets.style.opacity = '0';
+        });
+
+        var interactiveSelectors = 'a, button, input, textarea, select, [role="button"], .project-card, .skill-tag, .theme-toggle';
+
+        document.addEventListener('mouseover', function(e) {
+          if (e.target.closest(interactiveSelectors)) {
+            dot.classList.add('hovering');
+            ring.classList.add('hovering');
+            brackets.classList.add('hovering');
+          }
+        });
+        document.addEventListener('mouseout', function(e) {
+          if (e.target.closest(interactiveSelectors)) {
+            dot.classList.remove('hovering');
+            ring.classList.remove('hovering');
+            brackets.classList.remove('hovering');
+          }
+        });
+
+        function tick() {
+          dot.style.left = mx + 'px';
+          dot.style.top = my + 'px';
+
+          ringX += (mx - ringX) * 0.15;
+          ringY += (my - ringY) * 0.15;
+          ring.style.left = ringX + 'px';
+          ring.style.top = ringY + 'px';
+
+          bracketsX += (mx - bracketsX) * 0.1;
+          bracketsY += (my - bracketsY) * 0.1;
+          brackets.style.left = bracketsX + 'px';
+          brackets.style.top = bracketsY + 'px';
+
+          requestAnimationFrame(tick);
+        }
+        tick();
+      })();
+    })();
+  </script>
+</body>
+</html>
